@@ -2,6 +2,8 @@ package org.rio.commands;
 
 import org.rio.server.KeyValueStore;
 
+import static org.rio.constants.ResponseConstants.NULL_VALUE;
+
 public class DelCommand extends AbstractCommand {
 
     private static final String NAME = "DEL";
@@ -20,6 +22,6 @@ public class DelCommand extends AbstractCommand {
 
         String value = keyValueStore.remove(line);
 
-        return ":" + value;
+        return value != null ? value : NULL_VALUE;
     }
 }

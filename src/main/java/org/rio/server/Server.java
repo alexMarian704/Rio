@@ -37,6 +37,9 @@ public class Server {
         registry.register(new SetCommand(keyValueStore));
         registry.register(new ExistsCommand(keyValueStore));
         registry.register(new AppendCommand(keyValueStore));
+        registry.register(new IncrementByCommand(keyValueStore));
+        registry.register(new GetSetCommand(keyValueStore));
+        registry.register(new SetIfNotExistsCommand(keyValueStore));
 
         CommandHandler commandHandler = new CommandHandler(registry);
         Validator validator = new Validator();

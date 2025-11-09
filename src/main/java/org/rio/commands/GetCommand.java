@@ -2,6 +2,8 @@ package org.rio.commands;
 
 import org.rio.server.KeyValueStore;
 
+import static org.rio.constants.ResponseConstants.NULL_VALUE;
+
 public class GetCommand extends AbstractCommand {
 
     private static final String NAME = "GET";
@@ -20,6 +22,6 @@ public class GetCommand extends AbstractCommand {
 
         String value = keyValueStore.get(line);
 
-        return value == null ? "(nil)" : value;
+        return value == null ? NULL_VALUE : value;
     }
 }

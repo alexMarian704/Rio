@@ -18,8 +18,8 @@ public class ExistsCommand extends AbstractCommand {
             return "-ERR wrong number of arguments for DEL";
         }
 
-        String value = keyValueStore.remove(line);
+        boolean value = keyValueStore.exists(line);
 
-        return ":" + value;
+        return ":" + (value ? 1 : 0);
     }
 }

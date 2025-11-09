@@ -7,8 +7,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ShardsProcessor implements Processor {
 
-    private final static int MAX_QUEUE_SIZE = 10_000_000;
-
     private final int numberOfShards;
     private final ExecutorService[] executors;
     private final CommandHandler commandHandler;
@@ -33,9 +31,16 @@ public class ShardsProcessor implements Processor {
             throw new RuntimeException("Processor is not started");
         }
 
-        validator.validate(line);
+        String trimLine = line.trim();
 
-        return executors[hashKey(line)].submit(() -> commandHandler.handle(line));
+        validator.validate(trimLine);
+
+        int hash = hashKey(trimLine);
+        if (hash == -1) {
+            throw new IllegalArgumentException("-ERR invalid key");
+        }
+
+        return executors[hash].submit(() -> commandHandler.handle(trimLine));
     }
 
     private int hashKey(String line) {
@@ -47,11 +52,18 @@ public class ShardsProcessor implements Processor {
         }
 
         int nextSeparator = line.indexOf(' ', separator + 1);
+        String key;
         if (nextSeparator == -1) {
-            return (line.substring(separator + 1).hashCode() & 0x7fffffff) % numberOfShards;
+            key = line.substring(separator + 1);
+        } else {
+            key = line.substring(separator + 1, nextSeparator);
         }
 
-        return (line.substring(separator + 1, nextSeparator).hashCode() & 0x7fffffff) % numberOfShards;
+        if (key.isBlank()) {
+            return -1;
+        }
+
+        return (key.hashCode() & 0x7fffffff) % numberOfShards;
     }
 
     @Override

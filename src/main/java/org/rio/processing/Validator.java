@@ -9,7 +9,6 @@ public class Validator {
         if (line == null) {
             throw new IllegalArgumentException("-ERR line is null");
         }
-        line = line.trim();
 
         if (line.isEmpty()) {
             throw new IllegalArgumentException("-ERR line empty");

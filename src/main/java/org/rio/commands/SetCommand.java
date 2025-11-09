@@ -22,10 +22,6 @@ public class SetCommand extends AbstractCommand {
         String key = line.substring(0, nextSeparator);
         String value = line.substring(nextSeparator + 1);
 
-        if (key.isEmpty()) {
-            return "-ERR empty key";
-        }
-
         keyValueStore.insert(key, value);
 
         return "OK";

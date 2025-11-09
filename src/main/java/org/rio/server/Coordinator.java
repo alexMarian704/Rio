@@ -38,7 +38,7 @@ public class Coordinator {
                         response = processor.process(line).get();
                     } catch (Exception e) {
                         logger.warn("Error while processing", e);
-                        response = "-ERR while processing request";
+                        response = e.getMessage();
                     }
 
                     if ("__QUIT__".equals(response)) {
