@@ -3,6 +3,9 @@ package org.rio.processing;
 import org.rio.commands.AbstractCommand;
 import org.rio.commands.CommandRegistry;
 
+import static org.rio.constants.ResponseConstants.INTERNAL_SERVER_ERROR;
+import static org.rio.constants.ResponseConstants.UNKNOWN_COMMAND;
+
 public class CommandHandler {
 
     private final CommandRegistry commandRegistry;
@@ -20,13 +23,13 @@ public class CommandHandler {
 
         AbstractCommand commandClass = commandRegistry.getCommand(command);
         if (commandClass == null) {
-            return "-ERR unknown command";
+            return UNKNOWN_COMMAND;
         }
 
         try {
             return commandClass.handle(line.substring(separator + 1));
         } catch (Exception e) {
-            return "-ERR internal server error";
+            return INTERNAL_SERVER_ERROR;
         }
     }
 }

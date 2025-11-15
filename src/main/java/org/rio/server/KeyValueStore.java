@@ -31,4 +31,9 @@ public class KeyValueStore {
 
         store.clear();
     }
+
+    public void insertAll(Map<String, String> other) {
+
+        store.putAll(other);
+    }
 }
