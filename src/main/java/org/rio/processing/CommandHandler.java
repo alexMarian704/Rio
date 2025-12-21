@@ -3,6 +3,8 @@ package org.rio.processing;
 import org.rio.commands.AbstractCommand;
 import org.rio.commands.CommandRegistry;
 
+import java.util.List;
+
 import static org.rio.constants.ResponseConstants.INTERNAL_SERVER_ERROR;
 import static org.rio.constants.ResponseConstants.UNKNOWN_COMMAND;
 
@@ -15,10 +17,9 @@ public class CommandHandler {
         this.commandRegistry = commandRegistry;
     }
 
-    public String handle(String line) {
+    public String handle(List<String> data) {
 
-        int separator = line.indexOf(' ');
-        String command = separator == -1 ? line : line.substring(0, separator);
+        String command = data.getFirst();
         command = command.toUpperCase();
 
         AbstractCommand commandClass = commandRegistry.getCommand(command);
@@ -27,7 +28,7 @@ public class CommandHandler {
         }
 
         try {
-            return commandClass.handle(line.substring(separator + 1));
+            return commandClass.handle(data);
         } catch (Exception e) {
             return INTERNAL_SERVER_ERROR;
         }

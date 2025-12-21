@@ -1,6 +1,12 @@
 package org.rio.commands;
 
-import org.rio.server.KeyValueStore;
+import org.rio.store.KeyValueStore;
+import org.rio.store.WrongTypeException;
+
+import java.util.List;
+
+import static org.rio.constants.ResponseConstants.WRONG_DATA_TYPE;
+import static org.rio.constants.ResponseConstants.WRONG_NUMBER_OF_ARGUMENTS;
 
 public class SetIfNotExistsCommand extends AbstractCommand {
 
@@ -12,18 +18,21 @@ public class SetIfNotExistsCommand extends AbstractCommand {
     }
 
     @Override
-    public String handle(String line) {
+    public String handle(List<String> data) {
 
-        int separator = line.indexOf(' ');
-        if (separator == -1) {
-            return "-ERR wrong number of arguments fro SETX";
+        if (data.size() != 3) {
+            return String.format(WRONG_NUMBER_OF_ARGUMENTS, NAME);
         }
 
-        String key = line.substring(0, separator);
+        String key = data.get(1);
 
         if (!keyValueStore.exists(key)) {
-            String value = line.substring(separator + 1);
-            keyValueStore.insert(key, value);
+            String value = data.get(2);
+            try {
+                keyValueStore.insert(key, value);
+            } catch (WrongTypeException e) {
+                return WRONG_DATA_TYPE;
+            }
 
             return ":1";
         }

@@ -2,6 +2,7 @@ package org.rio.processing;
 
 import org.rio.common.NamedThreadFactory;
 
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,41 +26,32 @@ public class ShardsProcessor implements Processor {
     }
 
     @Override
-    public Future<String> process(String line) {
+    public Future<String> process(List<String> data) {
 
         if (!started) {
             throw new RuntimeException("Processor is not started");
         }
 
-        String trimLine = line.trim();
+        validator.validate(data);
 
-        validator.validate(trimLine);
-
-        int hash = hashKey(trimLine);
+        int hash = hashKey(data);
         if (hash == -1) {
             throw new IllegalArgumentException("-ERR invalid key");
         }
 
-        return executors[hash].submit(() -> commandHandler.handle(trimLine));
+        return executors[hash].submit(() -> commandHandler.handle(data));
     }
 
-    private int hashKey(String line) {
+    private int hashKey(List<String> data) {
 
-        int separator = line.indexOf(' ');
-        if (separator == -1) {
+        if (data.size() == 1) {
             circularIndex.set(circularIndex.incrementAndGet() % numberOfShards);
             return circularIndex.get();
         }
 
-        int nextSeparator = line.indexOf(' ', separator + 1);
-        String key;
-        if (nextSeparator == -1) {
-            key = line.substring(separator + 1);
-        } else {
-            key = line.substring(separator + 1, nextSeparator);
-        }
+        String key = data.getFirst();
 
-        if (key.isBlank()) {
+        if (key == null || key.isBlank()) {
             return -1;
         }
 

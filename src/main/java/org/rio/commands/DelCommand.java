@@ -1,8 +1,11 @@
 package org.rio.commands;
 
-import org.rio.server.KeyValueStore;
+import org.rio.store.KeyValueStore;
+
+import java.util.List;
 
 import static org.rio.constants.ResponseConstants.NULL_VALUE;
+import static org.rio.constants.ResponseConstants.WRONG_NUMBER_OF_ARGUMENTS;
 
 public class DelCommand extends AbstractCommand {
 
@@ -14,14 +17,14 @@ public class DelCommand extends AbstractCommand {
     }
 
     @Override
-    public String handle(String line) {
+    public String handle(List<String> data) {
 
-        if (line.isEmpty()) {
-            return "-ERR wrong number of arguments for DEL";
+        if (data.size() != 2) {
+            return String.format(WRONG_NUMBER_OF_ARGUMENTS, NAME);
         }
 
-        String value = keyValueStore.remove(line);
+        Object value = keyValueStore.remove(data.get(1));
 
-        return value != null ? value : NULL_VALUE;
+        return value != null ? value.toString() : NULL_VALUE;
     }
 }

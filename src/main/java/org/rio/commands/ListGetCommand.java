@@ -3,16 +3,17 @@ package org.rio.commands;
 import org.rio.store.KeyValueStore;
 import org.rio.store.WrongTypeException;
 
+import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 
 import static org.rio.constants.ResponseConstants.*;
 
-public class MultipleGetCommand extends AbstractCommand {
+public class ListGetCommand extends AbstractCommand {
 
-    private static final String NAME = "MGET";
+    private static final String NAME = "LSTGET";
 
-    public MultipleGetCommand(KeyValueStore keyValueStore) {
+    public ListGetCommand(KeyValueStore keyValueStore) {
 
         super(keyValueStore, NAME);
     }
@@ -20,22 +21,27 @@ public class MultipleGetCommand extends AbstractCommand {
     @Override
     public String handle(List<String> data) {
 
-        if (data.size() < 2) {
+        if (data.size() != 2) {
             return String.format(WRONG_NUMBER_OF_ARGUMENTS, NAME);
         }
 
-        List<String> keys = data.subList(1, data.size());
+        String key = data.get(1);
+        Deque<String> values;
+
+        try {
+            values = keyValueStore.getFullList(key);
+        } catch (WrongTypeException e) {
+            return WRONG_DATA_TYPE;
+        }
+
+        if (values == null) {
+            return NULL_VALUE;
+        }
+
         StringBuilder result = new StringBuilder();
+
         int index = 1;
-
-        for (String key : keys) {
-            String value;
-
-            try {
-                value = keyValueStore.get(key);
-            } catch (WrongTypeException e) {
-                return WRONG_DATA_TYPE + " for " + key;
-            }
+        for (String value : values) {
             result.append(index++).append(")").append(" ").append(Objects.requireNonNullElse(value, NULL_VALUE)).append(' ');
         }
 

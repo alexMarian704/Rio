@@ -1,6 +1,12 @@
 package org.rio.commands;
 
-import org.rio.server.KeyValueStore;
+import org.rio.store.KeyValueStore;
+import org.rio.store.WrongTypeException;
+
+import java.util.List;
+
+import static org.rio.constants.ResponseConstants.WRONG_DATA_TYPE;
+import static org.rio.constants.ResponseConstants.WRONG_NUMBER_OF_ARGUMENTS;
 
 public class IncrementByCommand extends AbstractCommand {
 
@@ -12,15 +18,14 @@ public class IncrementByCommand extends AbstractCommand {
     }
 
     @Override
-    public String handle(String line) {
+    public String handle(List<String> data) {
 
-        int separator = line.indexOf(' ');
-        if (separator == -1) {
-            return "-ERR wrong number of arguments for INCBY";
+        if (data.size() != 3) {
+            return String.format(WRONG_NUMBER_OF_ARGUMENTS, NAME);
         }
 
-        String key = line.substring(0, separator);
-        String value = line.substring(separator + 1);
+        String key = data.get(1);
+        String value = data.get(2);
 
         long delta;
         try {
@@ -29,7 +34,12 @@ public class IncrementByCommand extends AbstractCommand {
             return "-ERR the value is not a valid number";
         }
 
-        String currentStr = keyValueStore.get(key);
+        String currentStr;
+        try {
+            currentStr = keyValueStore.get(key);
+        } catch (WrongTypeException e) {
+            return WRONG_DATA_TYPE;
+        }
         long current = 0L;
         if (currentStr != null) {
             try {
@@ -45,7 +55,13 @@ public class IncrementByCommand extends AbstractCommand {
         } catch (ArithmeticException e) {
             return "-ERR the result will overflow";
         }
-        keyValueStore.insert(key, Long.toString(next));
+
+
+        try {
+            keyValueStore.insert(key, Long.toString(next));
+        } catch (WrongTypeException e) {
+            return WRONG_DATA_TYPE;
+        }
 
         return ":" + next;
     }

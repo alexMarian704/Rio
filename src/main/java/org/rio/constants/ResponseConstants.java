@@ -13,4 +13,10 @@ public class ResponseConstants {
     public final static String INTERNAL_SERVER_ERROR = "-ERR internal server error";
 
     public final static String OK_MESSAGE = "OK";
+
+    public final static String WRONG_DATA_TYPE = "-ERR wrong data type";
+
+    public final static String WRONG_NUMBER_OF_ARGUMENTS = "-ERR wrong number of arguments for %s";
+
+    public final static String INVALID_COMMAND = "-ERR invalid command";
 }

@@ -7,12 +7,11 @@ import java.util.List;
 
 import static org.rio.constants.ResponseConstants.*;
 
-public class GetSetCommand extends AbstractCommand {
+public class ListAddFirstCommand extends AbstractCommand {
 
-    private final static String NAME = "GETSET";
+    private static final String NAME = "LPUSH";
 
-    public GetSetCommand(KeyValueStore keyValueStore) {
-
+    public ListAddFirstCommand(KeyValueStore keyValueStore) {
         super(keyValueStore, NAME);
     }
 
@@ -24,21 +23,16 @@ public class GetSetCommand extends AbstractCommand {
         }
 
         String key = data.get(1);
-        String value = data.get(2);
+        List<String> values = data.subList(1, data.size());
 
-        if (value.isBlank()) {
-            return "-ERR the value cannot be empty";
-        }
-
-        String oldValue;
         try {
-            oldValue = keyValueStore.get(key);
-
-            keyValueStore.insert(key, value);
+            for (String value : values) {
+                keyValueStore.addFirst(key, value);
+            }
         } catch (WrongTypeException e) {
-            return WRONG_DATA_TYPE;
+            throw new RuntimeException(e);
         }
 
-        return oldValue != null ? oldValue : NULL_VALUE;
+        return OK_MESSAGE;
     }
 }

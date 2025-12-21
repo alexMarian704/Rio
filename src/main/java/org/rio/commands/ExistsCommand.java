@@ -1,6 +1,10 @@
 package org.rio.commands;
 
-import org.rio.server.KeyValueStore;
+import org.rio.store.KeyValueStore;
+
+import java.util.List;
+
+import static org.rio.constants.ResponseConstants.WRONG_NUMBER_OF_ARGUMENTS;
 
 public class ExistsCommand extends AbstractCommand {
 
@@ -12,13 +16,13 @@ public class ExistsCommand extends AbstractCommand {
     }
 
     @Override
-    public String handle(String line) {
+    public String handle(List<String> data) {
 
-        if (line.isEmpty()) {
-            return "-ERR wrong number of arguments for DEL";
+        if (data.size() != 2) {
+            return String.format(WRONG_NUMBER_OF_ARGUMENTS, NAME);
         }
 
-        boolean value = keyValueStore.exists(line);
+        boolean value = keyValueStore.exists(data.get(1));
 
         return ":" + (value ? 1 : 0);
     }

@@ -1,21 +1,17 @@
 package org.rio.processing;
 
-import static org.rio.constants.MemoryConstants.MAX_LINE_SIZE;
+import java.util.List;
 
 public class Validator {
 
-    public void validate(String line) {
+    public void validate(List<String> data) {
 
-        if (line == null) {
-            throw new IllegalArgumentException("-ERR line is null");
+        if (data == null) {
+            throw new IllegalArgumentException("-ERR content is null");
         }
 
-        if (line.isEmpty()) {
-            throw new IllegalArgumentException("-ERR line empty");
-        }
-
-        if (line.length() > MAX_LINE_SIZE) {
-            throw new IllegalArgumentException("-ERR line too long");
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("-ERR there is no data");
         }
     }
 }

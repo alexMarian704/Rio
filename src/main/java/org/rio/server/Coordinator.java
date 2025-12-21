@@ -1,11 +1,13 @@
 package org.rio.server;
 
+import org.rio.processing.CommandDecoder;
 import org.rio.processing.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -28,22 +30,27 @@ public class Coordinator {
         executorService.submit(() -> {
             logger.info("Connection from {}", socket.getRemoteSocketAddress());
 
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            try (InputStream in = socket.getInputStream(); BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+                CommandDecoder commandDecoder = new CommandDecoder(in);
 
-                String line;
-                while ((line = in.readLine()) != null) {
+                while (true) {
                     String response;
                     try {
-                        response = processor.process(line).get();
-                    } catch (Exception e) {
-                        logger.warn("Error while processing", e);
-                        response = e.getMessage();
-                    }
+                        List<String> data = commandDecoder.decodeCommand();
 
-                    if ("__QUIT__".equals(response)) {
-                        logger.info("{} disconnected", socket.getRemoteSocketAddress());
-                        break;
+                        try {
+                            response = processor.process(data).get();
+                        } catch (Exception e) {
+                            logger.warn("Error while processing", e);
+                            response = e.getMessage();
+                        }
+
+                        if ("__QUIT__".equals(response)) {
+                            logger.info("{} disconnected", socket.getRemoteSocketAddress());
+                            break;
+                        }
+                    } catch (Exception e) {
+                        response = e.getMessage();
                     }
 
                     out.write(response);

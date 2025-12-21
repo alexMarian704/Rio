@@ -5,14 +5,13 @@ import org.rio.store.WrongTypeException;
 
 import java.util.List;
 
-import static org.rio.constants.ResponseConstants.WRONG_DATA_TYPE;
-import static org.rio.constants.ResponseConstants.WRONG_NUMBER_OF_ARGUMENTS;
+import static org.rio.constants.ResponseConstants.*;
 
-public class SetCommand extends AbstractCommand {
+public class ListRemoveFirstCommand extends AbstractCommand {
 
-    private static final String NAME = "SET";
+    private static final String NAME = "LPOP";
 
-    public SetCommand(KeyValueStore keyValueStore) {
+    public ListRemoveFirstCommand(KeyValueStore keyValueStore) {
 
         super(keyValueStore, NAME);
     }
@@ -20,19 +19,19 @@ public class SetCommand extends AbstractCommand {
     @Override
     public String handle(List<String> data) {
 
-        if (data.size() != 3) {
+        if (data.size() != 2) {
             return String.format(WRONG_NUMBER_OF_ARGUMENTS, NAME);
         }
 
         String key = data.get(1);
-        String value = data.get(2);
+        String value;
 
         try {
-            keyValueStore.insert(key, value);
+            value = keyValueStore.pollFirst(key);
         } catch (WrongTypeException e) {
             return WRONG_DATA_TYPE;
         }
 
-        return "OK";
+        return value == null ? NULL_VALUE : value;
     }
 }

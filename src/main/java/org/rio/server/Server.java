@@ -5,6 +5,7 @@ import org.rio.processing.CommandHandler;
 import org.rio.processing.Processor;
 import org.rio.processing.ShardsProcessor;
 import org.rio.processing.Validator;
+import org.rio.store.KeyValueStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,13 @@ public class Server {
         registry.register(new SetIfNotExistsCommand(keyValueStore));
         registry.register(new MultipleGetCommand(keyValueStore));
         registry.register(new MultipleSetCommand(keyValueStore));
+        registry.register(new ListGetFirstCommand(keyValueStore));
+        registry.register(new ListGetLastCommand(keyValueStore));
+        registry.register(new ListAddFirstCommand(keyValueStore));
+        registry.register(new ListAddLastCommand(keyValueStore));
+        registry.register(new ListRemoveLastCommand(keyValueStore));
+        registry.register(new ListRemoveFirstCommand(keyValueStore));
+        registry.register(new ListGetCommand(keyValueStore));
 
         CommandHandler commandHandler = new CommandHandler(registry);
         Validator validator = new Validator();

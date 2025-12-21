@@ -1,6 +1,12 @@
 package org.rio.commands;
 
-import org.rio.server.KeyValueStore;
+import org.rio.store.KeyValueStore;
+import org.rio.store.WrongTypeException;
+
+import java.util.List;
+
+import static org.rio.constants.ResponseConstants.WRONG_DATA_TYPE;
+import static org.rio.constants.ResponseConstants.WRONG_NUMBER_OF_ARGUMENTS;
 
 public class AppendCommand extends AbstractCommand {
 
@@ -12,23 +18,27 @@ public class AppendCommand extends AbstractCommand {
     }
 
     @Override
-    public String handle(String line) {
+    public String handle(List<String> data) {
 
-        int nextSeparator = line.indexOf(' ');
-        if (nextSeparator == -1) {
-            return "-ERR wrong number of arguments for SET";
+        if (data.size() != 3) {
+            return String.format(WRONG_NUMBER_OF_ARGUMENTS, NAME);
         }
 
-        String key = line.substring(0, nextSeparator);
-        String value = line.substring(nextSeparator + 1);
+        String key = data.get(1);
+        String value = data.get(2);
 
         if (key.isEmpty()) {
             return "-ERR empty key";
         }
 
-        String current = keyValueStore.get(key);
+        String current;
+        try {
+            current = keyValueStore.get(key);
 
-        keyValueStore.insert(key, current == null ? value : current + value);
+            keyValueStore.insert(key, current == null ? value : current + value);
+        } catch (WrongTypeException e) {
+            return WRONG_DATA_TYPE;
+        }
 
         return "OK";
     }

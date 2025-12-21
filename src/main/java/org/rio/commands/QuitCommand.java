@@ -1,6 +1,8 @@
 package org.rio.commands;
 
-import org.rio.server.KeyValueStore;
+import org.rio.store.KeyValueStore;
+
+import java.util.List;
 
 public class QuitCommand extends AbstractCommand {
 
@@ -12,7 +14,7 @@ public class QuitCommand extends AbstractCommand {
     }
 
     @Override
-    public String handle(String line) {
+    public String handle(List<String> data) {
 
         return "__QUIT__";
     }
