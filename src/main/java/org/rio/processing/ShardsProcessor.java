@@ -49,7 +49,7 @@ public class ShardsProcessor implements Processor {
             return circularIndex.get();
         }
 
-        String key = data.getFirst();
+        String key = data.get(1);
 
         if (key == null || key.isBlank()) {
             return -1;

@@ -1,12 +1,11 @@
 package org.rio.commands;
 
-import org.rio.store.KeyValueStore;
+import org.rio.storage.KeyValueStore;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.rio.constants.ResponseConstants.INVALID_VALUES;
 import static org.rio.constants.ResponseConstants.OK_MESSAGE;
 
 public class MultipleSetCommand extends AbstractCommand {

@@ -1,4 +1,4 @@
-package org.rio.store;
+package org.rio.storage.exceptions;
 
 public class WrongTypeException extends Exception {
 

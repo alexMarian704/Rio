@@ -1,4 +1,6 @@
-package org.rio.store;
+package org.rio.storage;
+
+import org.rio.storage.exceptions.WrongTypeException;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -59,11 +61,8 @@ public class KeyValueStore {
 
         checkStoreIsList(key);
 
-        if (!listsStore.containsKey(key)) {
-            listsStore.put(key, new ArrayDeque<>());
-        }
-
-        listsStore.get(key).addFirst(value);
+        Deque<String> list = listsStore.computeIfAbsent(key, k -> new ArrayDeque<>());
+        list.addFirst(value);
     }
 
     public void addLast(String key, String value) throws WrongTypeException {

@@ -1,6 +1,6 @@
 package org.rio.commands;
 
-import org.rio.store.KeyValueStore;
+import org.rio.storage.KeyValueStore;
 
 import java.util.List;
 

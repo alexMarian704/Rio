@@ -125,7 +125,7 @@ public class CommandDecoder {
 
         readCRLF();
 
-        return new String(string);
+        return new String(string, StandardCharsets.UTF_8);
     }
 
     private void readCRLF() throws IOException {

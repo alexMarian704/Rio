@@ -5,7 +5,7 @@ import org.rio.processing.CommandHandler;
 import org.rio.processing.Processor;
 import org.rio.processing.ShardsProcessor;
 import org.rio.processing.Validator;
-import org.rio.store.KeyValueStore;
+import org.rio.storage.KeyValueStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

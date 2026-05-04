@@ -1,7 +1,7 @@
 package org.rio.commands;
 
-import org.rio.store.KeyValueStore;
-import org.rio.store.WrongTypeException;
+import org.rio.storage.KeyValueStore;
+import org.rio.storage.exceptions.WrongTypeException;
 
 import java.util.Deque;
 import java.util.List;

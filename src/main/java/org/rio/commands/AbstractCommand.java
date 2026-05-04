@@ -1,6 +1,6 @@
 package org.rio.commands;
 
-import org.rio.store.KeyValueStore;
+import org.rio.storage.KeyValueStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +74,7 @@ public abstract class AbstractCommand {
                             break;
                         case 't':
                             value.append('\t');
+                            break;
                         default:
                             value.append(esc);
                             break;
